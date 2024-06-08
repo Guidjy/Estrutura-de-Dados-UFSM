@@ -52,7 +52,26 @@ static No no_cria(void *dado, char *tipo)
         return NULL;
     }
     // inicializa os descritores
-    novo->dado = dado;
+    if (strcmp(tipo, "int") == 0)
+    {
+        novo->dado = malloc(sizeof(int));
+        memmove(novo->dado, dado, sizeof(int));
+    }
+    else if (strcmp(tipo, "float") == 0)
+    {
+        novo->dado = malloc(sizeof(float));
+        memmove(novo->dado, dado, sizeof(float));
+    }
+    else if (strcmp(tipo, "char") == 0)
+    {
+        novo->dado = malloc(sizeof(char));
+        memmove(novo->dado, dado, sizeof(char));
+    }
+    else if (strcmp(tipo, "string") == 0)
+    {
+        novo->dado = malloc(strlen(dado));
+        strcpy(novo->dado, dado);
+    }
     novo->tipo = tipo;
     novo->ant = NULL;
     novo->prox = NULL;
