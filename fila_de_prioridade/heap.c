@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "heap.h"
-#include "lista.h"
+#include "fila.h"
 
 
 // estrutura de um heap binário
@@ -146,13 +146,13 @@ void heap_imprime(heap_t self)
     }
 
     // realiza um percurso em largura para imprimir o heap
-    Lista fila_de_nos = lista_cria();  // fila com os nós de um nível
+    Fila fila_de_nos = fila_cria();  // fila com os nós de um nível
     int pos = 0;
-    lista_enqueue(fila_de_nos, &pos, "int");
+    fila_enqueue(fila_de_nos, pos);
 
-    while (!lista_vazia(fila_de_nos))
+    while (!fila_vazia(fila_de_nos))
     {
-        pos = *(int*)lista_dequeue(fila_de_nos);
+        pos = fila_dequeue(fila_de_nos);
         printf("No [%d]: ", self->nos[pos]);
 
         int pos_filho_esquerdo = pos * 2 + 1;
@@ -160,24 +160,24 @@ void heap_imprime(heap_t self)
 
         if (pos_filho_esquerdo < self->n_nos)
         {
-            lista_enqueue(fila_de_nos, &pos_filho_esquerdo, "int");
-            printf("filho esq: %d, ", self->nos[pos_filho_esquerdo]);
+            fila_enqueue(fila_de_nos, pos_filho_esquerdo);
+            printf("filho esq: [%d], ", self->nos[pos_filho_esquerdo]);
         }
         else
         {
-            printf("filho esq: VAZIO,");
+            printf("filho esq: [VAZIO],");
         }
 
         if (pos_filho_direito < self->n_nos)
         {
-            lista_enqueue(fila_de_nos, &pos_filho_direito, "int");
-            printf("filho dir: %d", self->nos[pos_filho_direito]);
+            fila_enqueue(fila_de_nos, pos_filho_direito);
+            printf("filho dir: [%d]", self->nos[pos_filho_direito]);
         }
         else
         {
-            printf("filho dir: VAZIO");
+            printf("filho dir: [VAZIO]");
         }
         printf("\n");
     }
-    lista_libera(fila_de_nos);
+    fila_libera(fila_de_nos);
 }
