@@ -15,5 +15,7 @@ void heap_insere(heap_t self, int dado);
 // remove o nó de maior prioridade (nó raiz)
 int heap_remove(heap_t self);
 
+// imprime o heap binário
+void heap_imprime(heap_t self);
 
 #endif
