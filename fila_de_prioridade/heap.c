@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "heap.h"
+#include "lista.h"
 
 
 // estrutura de um heap binário
@@ -77,7 +78,33 @@ static void heap_corrige_descendo(heap_t self, int pos)
 {
     int pos_maior_prioridade = pos;
     int pos_filho_esquerdo = pos * 2 + 1;
-    int pos_filho_direito = pos * 2 + 1;
+    int pos_filho_direito = pos * 2 + 2;
+
+    // se o nó em pos tiver um filho esquerdo
+    // e se a prioridade desse filho for maior do que a de seu pai
+    if (pos_filho_esquerdo < self->n_nos &&
+        self->nos[pos_filho_esquerdo] > self->nos[pos_maior_prioridade])
+    {
+        // a posição do nó de maior prioridade passa a ser a do filho esquerdo
+        pos_maior_prioridade = pos_filho_esquerdo;
+    }
+    // se o nó em pos tiver um filho direito
+    // e se a prioridade desse filho for maior do que a de seu pai
+    if (pos_filho_direito < self->n_nos &&
+        self->nos[pos_filho_direito] > self->nos[pos_maior_prioridade])
+    {
+        pos_maior_prioridade = pos_filho_direito;
+    }
+    // se algum desses casos ocorreu
+    if (pos_maior_prioridade != pos)
+    {
+        // troca os dados entre o pai e o filho
+        int temp = self->nos[pos];
+        self->nos[pos] = self->nos[pos_maior_prioridade];
+        self->nos[pos_maior_prioridade] = temp;
+        // continua a verificação no nó filho
+        heap_corrige_descendo(self, pos_maior_prioridade);
+    }
 }
 
 
@@ -90,19 +117,67 @@ int heap_remove(heap_t self)
         return 0;
     }
     // guarda o dado da raiz para retornar
-    int raiz_dado = self->nos[o];
+    int raiz_dado = self->nos[0];
     // Na remoção, o valor a remover está na raiz, mas a árvore deve perder o último nó pra continuar com a forma correta.
     // O dado que está no último nó deve ser colocado em outro local da árvore,
     // mas deve ser um local em que a ordem heap não seja violada.
-    int pos_no_relocado = self->n_nos - 1;
+    int pos_no_relocado = self->n_nos - 1;   // guarda a posição do último nó
+    // decrementa o número de nós na fila
+    self->n_nos--;
     // se a heap não tiver ficado vazia com a remoção da raiz
     if (pos_no_relocado != 0)
     {
-        // coloca o dado do nó final na raiz
+        // copia o dado do último nó para a raiz
         self->nos[0] = self->nos[pos_no_relocado];
-        // decrementa o número de nós na fila
-        self->n_nos--;
         // corrige o heap a partir da raiz
         heap_corrige_descendo(self, 0);
     }
+    return raiz_dado;
+}
+
+
+void heap_imprime(heap_t self)
+{
+    // se o heap estiver vazio
+    if (self->n_nos == 0)
+    {
+        printf("FILA VAZIA\n");
+        return;
+    }
+
+    // realiza um percurso em largura para imprimir o heap
+    Lista fila_de_nos = lista_cria();  // fila com os nós de um nível
+    int pos = 0;
+    lista_enqueue(fila_de_nos, &pos, "int");
+
+    while (!lista_vazia(fila_de_nos))
+    {
+        pos = *(int*)lista_dequeue(fila_de_nos);
+        printf("No [%d]: ", self->nos[pos]);
+
+        int pos_filho_esquerdo = pos * 2 + 1;
+        int pos_filho_direito = pos * 2 + 2;
+
+        if (pos_filho_esquerdo < self->n_nos)
+        {
+            lista_enqueue(fila_de_nos, &pos_filho_esquerdo, "int");
+            printf("filho esq: %d, ", self->nos[pos_filho_esquerdo]);
+        }
+        else
+        {
+            printf("filho esq: VAZIO,");
+        }
+
+        if (pos_filho_direito < self->n_nos)
+        {
+            lista_enqueue(fila_de_nos, &pos_filho_direito, "int");
+            printf("filho dir: %d", self->nos[pos_filho_direito]);
+        }
+        else
+        {
+            printf("filho dir: VAZIO");
+        }
+        printf("\n");
+    }
+    lista_libera(fila_de_nos);
 }
