@@ -21,7 +21,6 @@ int main()
 
     // imprime o grafo
     grafo_imprime(g1);
-    printf("\n\n");
 
     // insere algumas arestas (peso 10 pra tudo)
     // deve ficar:
@@ -34,6 +33,34 @@ int main()
     grafo_altera_valor_aresta(g1, 1, 3, 10);
     grafo_altera_valor_aresta(g1, 3, 2, 10);
     grafo_imprime(g1);
+
+    // remove o nó 1
+    // deve ficar:
+    // 0 -> [1]
+    // 1 -> []
+    // 2 -> [1]
+    grafo_remove_no(g1, 1);
+    grafo_imprime(g1);
+
+    // remove tudo
+    while (grafo_nnos(g1) > 0)
+    {
+        grafo_remove_no(g1, 0);
+    }
+    grafo_imprime(g1);
+
+    // insere os 4 nós e suas arestas denovo
+    grafo_insere_no(g1);
+    grafo_insere_no(g1);
+    grafo_insere_no(g1);
+    grafo_insere_no(g1);
+    grafo_altera_valor_aresta(g1, 0, 1, 10);
+    grafo_altera_valor_aresta(g1, 0, 2, 10);
+    grafo_altera_valor_aresta(g1, 1, 3, 10);
+    grafo_altera_valor_aresta(g1, 3, 2, 10);
+    grafo_imprime(g1);
+
+
 
     return 0;
 }
