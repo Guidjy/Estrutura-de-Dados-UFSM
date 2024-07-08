@@ -91,7 +91,7 @@ static void aloca_vetor_listas_adjacencia(Grafo self)
 }
 
 
-int grafo_insere_no(Grafo self)
+int grafo_insere_no(Grafo self, int dado)
 {
     // cria um novo nó para ser inserido no grafo
     // 0-0: os nós são indentificados pela sua ordem de inserção, começando do 0
@@ -100,6 +100,7 @@ int grafo_insere_no(Grafo self)
     {
         return -1;
     }
+    novo_no->valor_no = dado;
     // incrementa o número de nós no grafo
     self->n_nos++;
     // se o número de nós for igual a capacidade máxima
@@ -199,31 +200,122 @@ void grafo_remove_no(Grafo self, int no_id)
 }
 
 
+void grafo_altera_valor_no(Grafo self, int no_id, int valor_no)
+{
+    // percorre o vetor de listas de adjacências
+    for (int i = 0; i < grafo_nnos(self); i++)
+    {
+        // percorre a lista de adjacência no índice i
+        No_grafo p = self->listas_de_adjacencia[i];
+        while (p != NULL)
+        {
+            // se achar o nó em no_id
+            if (p->no_id == no_id)
+            {
+                // altera o valor do nó
+                p->valor_no = valor_no;
+            }
+            p = p->prox;
+        }
+    }
+}
+
+
+int grafo_valor_no(Grafo self, int no_id)
+{
+    return self->listas_de_adjacencia[no_id]->valor_no;
+
+}
+
 
 // Funções de manipulação de arestas
 
 
-void grafo_altera_valor_aresta(Grafo self, int origem, int destino, int peso)
+void grafo_altera_valor_aresta(Grafo self, int origem, int destino, int valor)
 {
-    // verifica se os índices de origem e destino são válidos
-    if (origem >= grafo_nnos(self) || destino >= grafo_nnos(self))
+    // altera o valor da aresta que interliga o nó origem ao nó destino
+    // caso a aresta não exista, deve ser criada
+    // caso "valor" seja -1, a aresta deve ser removida
+
+    // se o valor da aresta for -1
+    if (valor == -1)
     {
-        printf("ÍNDICES DE ORIGEM OU DESTINO INVÁLIDOS\n");
-        return;
+        // remove ela
+        No_grafo p = self->listas_de_adjacencia[origem]->prox;  // prox pq não vai remover a cabeça da lista
+        No_grafo p_ant = NULL;
+        while (p != NULL && p->no_id != destino)
+        {
+            p_ant = p;
+            p = p->prox;
+        }
+        // se não tiver essa aresta
+        if (p == NULL)
+        {
+            // não faz nada
+            return;
+        }
+        // se for uma aresta para o primeiro nó da lista
+        else if (p_ant == NULL)
+        {
+            self->listas_de_adjacencia[origem]->prox = p->prox;
+            free(p);
+        }
+        // se for uma aresta para um nó no meio ou final da lista
+        else
+        {
+            p_ant->prox = p->prox;
+            free(p);
+        }
     }
-    // cria um nó com o peso da aresta
-    No_grafo novo_no = no_grafo_cria(destino, peso);
-    if (novo_no == NULL)
+    // se o valor não for -1
+    else
     {
-        return;
+        // percorre a lista de adjacências do nó em origem
+        No_grafo p = self->listas_de_adjacencia[origem];
+        No_grafo p_ant = NULL;
+        while (p != NULL && p->no_id != destino)
+        {
+            p_ant = p;
+            p = p->prox;
+        }
+        // se não tiver essa uma aresta até o nó destino
+        if (p == NULL)
+        {
+            // cria um nó com o valor da aresta
+            No_grafo novo_no = no_grafo_cria(destino, valor);
+            if (novo_no == NULL)
+            {
+                return;
+            }
+            novo_no->valor_no = grafo_valor_no(self, destino);
+            // encadeia o nó na lista de adjacências
+            p_ant->prox = novo_no;
+        }
+        // se tiver essa aresta
+        else
+        {
+            // altera o valor dela
+            p->valor_aresta = valor;
+        }
     }
-    // encadeia o nó na lista de adjacências
-    No_grafo p = self->listas_de_adjacencia[origem];
-    while (p->prox != NULL)
+}
+
+
+bool grafo_valor_aresta(Grafo self, int origem, int destino, void *pdado)
+{
+    // percorre a lista de adjacências do nó origem
+    No_grafo p = self->listas_de_adjacencia[origem]->prox;
+    while (p != NULL)
     {
-        p = p->prox;
+        // se achar o nó desejado
+        if (p->no_id == destino)
+        {
+            // copia op valor da aresta para pdado
+            memmove(pdado, &p->valor_aresta, sizeof(int));
+            return true;
+        }
     }
-    p->prox = novo_no;
+    return false;
 }
 
 
@@ -244,7 +336,7 @@ void grafo_imprime(Grafo self)
     // percorre o vetor de listas de adjacências
     for (int i = 0; i < grafo_nnos(self); i++)
     {
-        printf("%d -> [ ", self->listas_de_adjacencia[i]->no_id);
+        printf("%d(%d) -> [ ", self->listas_de_adjacencia[i]->no_id, self->listas_de_adjacencia[i]->valor_no);
         // ponteiro para percorrer a lista de adjacências
         No_grafo p = self->listas_de_adjacencia[i]->prox;
         // imprime a lista de adjacências
@@ -256,10 +348,10 @@ void grafo_imprime(Grafo self)
         {
             while (p->prox != NULL)
             {
-                printf("%d, ", p->no_id);
+                printf("%d(%d)(%d), ", p->no_id, p->valor_no, p->valor_aresta);
                 p = p->prox;
             }
-            printf("%d ]\n", p->no_id);
+            printf("%d(%d)(%d) ]\n", p->no_id, p->valor_no, p->valor_aresta);
         }
     }
     printf("n_nos: %d\n", self->n_nos);
