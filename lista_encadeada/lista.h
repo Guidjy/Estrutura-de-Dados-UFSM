@@ -19,10 +19,16 @@ int lista_len(Lista self);
 // obs: o dado a ser inserido deve ser passado por referência
 void lista_insere(Lista self, void *pdado);
 
-// remove o elemento no início da lista e retorna um ponteiro para ele 
-// (retorna NULL se a lista estiver vazia)
-// obs: tem que fazer casting do ponteiro e libera-lo devidamente
-void *lista_remove(Lista self);
+// insere um elemento no índice pos da lista
+void lista_insere_pos(Lista self, void *pdado, int pos);
+
+// remove o elemento no início da lista
+// copia o dado do elemento removido para o ponteiro passado
+void lista_remove(Lista self, void *removido);
+
+// remove o elemento no indice pos da lista
+// copia o dado do elemento removido para o ponteiro passado
+void lista_remove_pos(Lista self, void *removido, int pos);
 
 // organiza os elementos da lista em ordem crescente
 void lista_sort(Lista self);
