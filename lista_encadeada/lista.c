@@ -103,24 +103,63 @@ void lista_insere(Lista self, void *pdado)
 }
 
 
+// insere um elemento no índice pos da lista
+void lista_insere_pos(Lista self, void* pdado, int pos)
+{
+    // verifica se o dado passado é válido
+    if (pdado == NULL)
+    {
+        printf("Dado inválido para inserção\n");
+        return;
+    }
+
+    // verifica se o índice passado é válido
+    if (pos >= self->n_elem)
+    {
+        printf("índice de inserção inválido\n");
+        return;
+    }
+
+    // apoio para índice negativo (-1 = último índice)
+    if (pos < 0)
+    {
+        pos += self->n_elem;
+    }
+
+    // percorre a lista até o índice em pos
+    No_lista p = self->pri;
+    No_lista p_ant;
+    for (int i = 0; i < pos; i++)
+    {
+        p_ant = p;
+        p = p->prox;
+    }
+
+    // insere um nó em pos
+    No_lista novo_no = cria_no(pdado, self->tam_dado);
+    if (novo_no == NULL) return;
+    p_ant->prox = novo_no;
+    novo_no->prox = p;
+
+    self->n_elem++;
+}
+
+
 // remove o elemento no início da lista e retorna um ponteiro para ele
-void *lista_remove(Lista self)
+void lista_remove(Lista self, void *removido)
 {
     // verifica se a lista está vazia
     if (lista_vazia(self))
     {
         printf("Lista vazia, não se pode remover elementos\n");
-        return NULL;
+        return;
     }
 
-    // guarda um ponteiro para o dado no início da lista
-    void *removido = malloc(self->tam_dado);
-    if (removido == NULL)
+    // copia o dado do primeiro elemento para *removido
+    if (removido != NULL)
     {
-        printf("Erro na remoção\n");
-        return NULL;
+        memmove(removido, self->pri->dado, self->tam_dado);
     }
-    memmove(removido, self->pri->dado, self->tam_dado);
 
     // desencadeia o primeiro nó e libera-o
     No_lista temp = self->pri;
@@ -130,9 +169,42 @@ void *lista_remove(Lista self)
 
     // decrementa o número de elementos na lista
     self->n_elem--;
+}
 
-    // retorna o elemento removido
-    return removido;
+
+// remove o elemento no indice pos da lista
+// copia o dado do elemento removido para o ponteiro passado
+void lista_remove_pos(Lista self, void *removido, int pos)
+{
+    // verifica se o índice de remoção é válido
+    if (pos >= self->n_elem)
+    {
+        printf("Índice de remoção inválido\n");
+        return;
+    }
+
+    // percorre a lista até o índice de remoção
+    No_lista p = self->pri;
+    No_lista p_ant;
+    for (int i = 0; i < pos; i++)
+    {
+        p_ant = p;
+        p = p->prox;
+    }
+
+    // copia o dado do nó a ser removido para o ponteiro
+    if (removido != NULL)
+    {
+        memmove(removido, p->dado, self->tam_dado);
+    }
+
+    // desencadeia e libera o nó em pos
+    No_lista temp = p;
+    p_ant->prox = p->prox;
+    free(temp->dado);
+    free(temp);
+
+    self->n_elem--;
 }
 
 
@@ -248,4 +320,23 @@ static void merge_sort(No_lista *ponteiro_cabeca)
 void lista_sort(Lista self)
 {
     merge_sort(&self->pri);
+}
+
+
+// imprime uma lista (apoio para os principais tipos de dados)
+void lista_imprime(Lista self)
+{
+    if (lista_vazia(self))
+    {
+        printf("[]\n");
+        return;        
+    }
+    printf("[");
+    No_lista p = self->pri;
+    while (p->prox != NULL)
+    {
+        printf("%.1f, ", *(float*)p->dado);
+        p = p->prox;
+    }
+    printf("%.1f]\n", *(float*)p->dado);
 }
