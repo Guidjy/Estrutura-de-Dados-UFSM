@@ -324,19 +324,51 @@ void lista_sort(Lista self)
 
 
 // imprime uma lista (apoio para os principais tipos de dados)
-void lista_imprime(Lista self)
+void lista_imprime(Lista self, char* tipo)
 {
     if (lista_vazia(self))
     {
         printf("[]\n");
-        return;        
+        return;
     }
-    printf("[");
+
     No_lista p = self->pri;
-    while (p->prox != NULL)
+    printf("[");
+    
+    if (strcmp(tipo, "char") == 0)
     {
-        printf("%.1f, ", *(float*)p->dado);
-        p = p->prox;
+        while (p->prox != NULL)
+        {
+            printf("%c, ", *(char*)p->dado);
+            p = p->prox;
+        }
+        printf("%c]\n", *(char*)p->dado);
     }
-    printf("%.1f]\n", *(float*)p->dado);
+    else if (strcmp(tipo, "str") == 0)
+    {
+        while (p->prox != NULL)
+        {
+            printf("%s, ", (char*)p->dado);
+            p = p->prox;
+        }
+        printf("%s]\n", (char*)p->dado);
+    }
+    else if (strcmp(tipo, "int") == 0)
+    {
+        while (p->prox != NULL)
+        {
+            printf("%d, ", *(int*)p->dado);
+            p = p->prox;
+        }
+        printf("%d]\n", *(int*)p->dado);
+    }
+    else if (strcmp(tipo, "float") == 0)
+    {
+        while (p->prox != NULL)
+        {
+            printf("%.1f, ", *(float*)p->dado);
+            p = p->prox;
+        }
+        printf("%.1f]\n", *(float*)p->dado);
+    }
 }
