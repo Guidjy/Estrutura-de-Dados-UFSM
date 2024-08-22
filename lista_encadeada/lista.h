@@ -36,7 +36,7 @@ void lista_sort(Lista self);
 // libera toda a memória alocada para uma lista
 void lista_destroi(Lista self);
 
-// imprime uma lista
-void lista_imprime(Lista self);
+// imprime uma lista (apoio para "char", "str", "int" e "float")
+void lista_imprime(Lista self, char *tipo);
 
 #endif
