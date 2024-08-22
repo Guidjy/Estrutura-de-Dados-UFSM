@@ -129,31 +129,77 @@ void fila_enqueue(Fila self, void *pdado)
 }
 
 
-// desenfileta a fila e retorna um ponteiro para o dado desenfilerado
-void *fila_dequeue(Fila self)
+// desenfileta a fila e copia o dado desenfilerado para um ponteiro
+void fila_dequeue(Fila self, void *desenfilerado)
 {
     // verifica se a fila está vazia
     if (fila_vazia(self))
     {
         printf("Fila vazia, não se pode desenfilerar\n");
-        return NULL;
+        return;
     }
 
-    // guarda um ponteiro para o dado do elemento no início da fila
-    void *desenfilerado = malloc(self->tam_dado);
-    if (desenfilerado == NULL)
+    if (desenfilerado != NULL)
     {
-        printf("Erro de alocação de memória na desenfileração\n");
-        return NULL;
+        memmove(desenfilerado, self->pri->dado, self->tam_dado);
     }
-    memmove(desenfilerado, self->pri->dado, self->tam_dado);
 
     // desencadeia o primeiro nó da fila
     No_fila temp = self->pri;
     self->pri = self->pri->prox;
     free(temp->dado);
     free(temp);
+    
     self->n_elem--;
+}
 
-    return desenfilerado;
+
+// imprime uma fila (apoio para os principais tipos de dados)
+void fila_imprime(Fila self, char* tipo)
+{
+    if (fila_vazia(self))
+    {
+        printf("[]\n");
+        return;
+    }
+
+    No_fila p = self->pri;
+    printf("[");
+    
+    if (strcmp(tipo, "char") == 0)
+    {
+        while (p->prox != NULL)
+        {
+            printf("%c, ", *(char*)p->dado);
+            p = p->prox;
+        }
+        printf("%c]\n", *(char*)p->dado);
+    }
+    else if (strcmp(tipo, "str") == 0)
+    {
+        while (p->prox != NULL)
+        {
+            printf("%s, ", (char*)p->dado);
+            p = p->prox;
+        }
+        printf("%s]\n", (char*)p->dado);
+    }
+    else if (strcmp(tipo, "int") == 0)
+    {
+        while (p->prox != NULL)
+        {
+            printf("%d, ", *(int*)p->dado);
+            p = p->prox;
+        }
+        printf("%d]\n", *(int*)p->dado);
+    }
+    else if (strcmp(tipo, "float") == 0)
+    {
+        while (p->prox != NULL)
+        {
+            printf("%.1f, ", *(float*)p->dado);
+            p = p->prox;
+        }
+        printf("%.1f]\n", *(float*)p->dado);
+    }
 }
