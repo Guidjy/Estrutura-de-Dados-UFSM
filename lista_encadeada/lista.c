@@ -145,7 +145,7 @@ void lista_insere_pos(Lista self, void* pdado, int pos)
 }
 
 
-// remove o elemento no início da lista e retorna um ponteiro para ele
+// remove o elemento no início da lista e copia seu dado para um ponteiro
 void lista_remove(Lista self, void *removido)
 {
     // verifica se a lista está vazia
@@ -172,8 +172,7 @@ void lista_remove(Lista self, void *removido)
 }
 
 
-// remove o elemento no indice pos da lista
-// copia o dado do elemento removido para o ponteiro passado
+// remove o elemento no indice pos da lista e copia seu dado para um ponteiro
 void lista_remove_pos(Lista self, void *removido, int pos)
 {
     // verifica se o índice de remoção é válido
