@@ -22,8 +22,10 @@ int fila_len(Fila self);
 // obs: o dado a ser inserido deve ser passado por referência
 void fila_enqueue(Fila self, void *pdado);
 
-// desenfileta a fila e retorna um ponteiro para o dado desenfilerado
-// obs: deve-se fazer o casting e liberação desse ponteiro
-void *fila_dequeue(Fila self);
+// desenfileta a fila e copia o dado desenfilerado para um ponteiro
+void fila_dequeue(Fila self, void *desenfilerado);
+
+// imprime uma fila
+void fila_imprime(Fila self, char* tipo);
 
 #endif
