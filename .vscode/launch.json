@@ -30,7 +30,7 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/guilherme/UFSM_semestre2/Edados/lista_generica",
+      "cwd": "/home/guilherme/UFSM_semestre2/Edados/lista_generica", // mudar para diretório atual
       "program": "${workspaceFolder}/a",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
